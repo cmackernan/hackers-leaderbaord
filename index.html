@@ -23,7 +23,6 @@
             min-height: 100vh;
         }
 
-        /* High-End Metallic Header */
         header {
             background: linear-gradient(to bottom, #113318, #051a0b);
             color: #fff;
@@ -33,14 +32,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
-        h1 { 
-            margin: 0; 
-            font-size: 2rem; 
-            letter-spacing: 2px; 
-            text-transform: uppercase;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            font-weight: 900;
-        }
+        h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; text-transform: uppercase; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); font-weight: 900; }
 
         #last-updated {
             display: inline-block;
@@ -54,11 +46,7 @@
             border: 1px solid rgba(212, 175, 55, 0.3);
         }
 
-        .container { 
-            max-width: 750px; 
-            margin: 30px auto; 
-            padding: 0 15px;
-        }
+        .container { max-width: 750px; margin: 30px auto; padding: 0 15px; }
 
         .entrant-card {
             background: var(--glass-white);
@@ -70,55 +58,25 @@
             transition: transform 0.2s;
         }
 
-        .main-info {
-            display: grid;
-            grid-template-columns: 60px 1fr 110px;
-            padding: 20px;
-            align-items: center;
-            cursor: pointer;
-        }
+        .main-info { display: grid; grid-template-columns: 60px 1fr 110px; padding: 20px; align-items: center; cursor: pointer; }
 
-        .rank { 
-            width: 35px;
-            height: 35px;
-            background: var(--gold-leaf);
-            color: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-weight: 900;
-        }
+        .rank { width: 35px; height: 35px; background: var(--gold-leaf); color: #000; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 900; }
 
         .name { font-weight: 700; font-size: 1.2rem; padding-left: 10px; color: #0a3d1e; }
 
-        .total-score { 
-            text-align: right; 
-            font-weight: 900; 
-            font-size: 1.5rem; 
-        }
+        .total-score { text-align: right; font-weight: 900; font-size: 1.5rem; }
 
-        .golfer-details {
-            display: none;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 20px;
-            border-top: 1px solid rgba(0,0,0,0.05);
-        }
+        .golfer-details { display: none; background: rgba(255, 255, 255, 0.6); padding: 20px; border-top: 1px solid rgba(0,0,0,0.05); }
 
         .golfer-details.active { display: block; }
 
-        .golfer-grid {
-            display: grid;
-            grid-template-columns: 1fr 70px 70px;
-            padding: 10px 5px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
+        .golfer-grid { display: grid; grid-template-columns: 1fr 70px 70px; padding: 10px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); }
 
         .grid-header { font-weight: bold; color: #4a6d54; text-transform: uppercase; font-size: 0.75rem; }
 
-        .score-under { color: #cc0000; }
-        .score-even { color: #666; }
-        .score-over { color: #1a2a1f; }
+        .score-under { color: #cc0000; font-weight: bold; }
+        .score-even { color: #666; font-weight: bold; }
+        .score-over { color: #1a2a1f; font-weight: bold; }
 
         .loader { text-align: center; padding: 100px; color: #fff; font-weight: bold; }
     </style>
@@ -217,7 +175,7 @@
     }
     
     fetchLeaderboard();
-    setInterval(fetchLeaderboard, 120000); // Auto-refresh every 2 mins
+    setInterval(fetchLeaderboard, 120000);
 </script>
 </body>
 </html>
