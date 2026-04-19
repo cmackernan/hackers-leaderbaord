@@ -1,30 +1,159 @@
-function doGet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // 1. Get Sweepstakes Data
-  const sweepSheet = ss.getSheetByName("Web_Display");
-  const sweepData = sweepSheet.getRange(1, 1, sweepSheet.getLastRow(), 23).getValues();
-  
-  // 2. Get Pro Leaderboard Data
-  const majorSheet = ss.getSheetByName("Major_Scores");
-  const majorData = majorSheet ? majorSheet.getDataRange().getValues() : [["No Data"]];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hackers Major | Live</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --green: #0a2e16; --gold: #d4af37; --glass: rgba(255,255,255,0.96); }
+        
+        body { 
+            font-family: 'Inter', sans-serif; margin: 0; padding: 0;
+            background: linear-gradient(rgba(10, 46, 22, 0.94), rgba(10, 46, 22, 0.94)), 
+                        url('https://www.transparenttextures.com/patterns/dark-leather.png'), #0a2e16;
+            background-attachment: fixed; color: #1a1a1a;
+        }
 
-  // 3. Package for the website
-  const result = {
-    sweepstakes: convertToJSON(sweepData),
-    major: convertToJSON(majorData)
-  };
+        header {
+            padding: 40px 20px; text-align: center; color: white;
+            background: radial-gradient(circle at center, #1e4d2b 0%, #051a0b 100%);
+            border-bottom: 4px solid var(--gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-  return ContentService.createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON);
-}
+        .weather { color: var(--gold); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .tabs { 
+            display: flex; justify-content: center; gap: 10px; padding: 15px; 
+            position: sticky; top: 0; z-index: 100; background: rgba(5,26,11,0.9); backdrop-filter: blur(10px);
+        }
 
-function convertToJSON(values) {
-  const headers = values[0];
-  return values.slice(1).map(row => {
-    return headers.reduce((acc, header, i) => {
-      acc[header] = row[i];
-      return acc;
-    }, {});
-  });
-}
+        .tab-btn {
+            background: transparent; border: 1px solid var(--gold); color: var(--gold);
+            padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 800; font-size: 0.8rem;
+        }
+
+        .tab-btn.active { background: var(--gold); color: black; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
+
+        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+
+        /* Leaderboard Styling */
+        .card { background: var(--glass); margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        
+        .card-main { display: grid; grid-template-columns: 50px 1fr 80px; padding: 20px; align-items: center; cursor: pointer; }
+        
+        .rank-sq { 
+            width: 38px; height: 38px; background: #222; color: #fff; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-weight: 900; 
+        }
+        .rank-1 { background: linear-gradient(135deg, #d4af37, #f9e27d); color: black; }
+        .rank-2 { background: #bdc3c7; color: black; }
+        .rank-3 { background: #cd7f32; color: white; }
+
+        .name-box { padding-left: 15px; }
+        .name-txt { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.5px; }
+        .score-txt { text-align: right; font-weight: 900; font-size: 1.6rem; color: var(--green); }
+
+        /* Detail/Hole View */
+        .picks-box { display: none; padding: 15px; background: #f4f4f4; border-top: 1px solid #ddd; }
+        .picks-box.active { display: block; }
+        .row { display: grid; grid-template-columns: 1fr 50px 50px; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.85rem; font-weight: 700; }
+        .row-head { font-size: 0.65rem; color: var(--gold); letter-spacing: 1px; border-bottom: 2px solid #ddd; }
+
+        /* Pro Standings View */
+        .pro-row { display: grid; grid-template-columns: 40px 1fr 60px 70px; padding: 15px; align-items: center; font-weight: 700; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="weather">⛅ Newtown Square: 12°C | 6MPH</div>
+    <h1 style="margin: 5px 0; font-size: 2.2rem; font-weight: 900;">HACKERS <span style="color:var(--gold)">MAJOR</span></h1>
+</header>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="toggle('sweep', this)">Sweepstakes</button>
+    <button class="tab-btn" onclick="toggle('major', this)">Pro Live</button>
+</div>
+
+<div class="container">
+    <div id="sweep-view"></div>
+    <div id="major-view" class="hidden">
+        <div class="card" style="background:none; box-shadow:none;">
+            <div class="pro-row" style="color:var(--gold); font-size:0.7rem; text-transform:uppercase;">
+                <span>Pos</span><span>Player</span><span>Thru</span><span style="text-align:right">Score</span>
+            </div>
+        </div>
+        <div id="major-list"></div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "YOUR_NEW_DEPLOY_URL_HERE";
+
+    function toggle(view, btn) {
+        document.getElementById('sweep-view').classList.add('hidden');
+        document.getElementById('major-view').classList.add('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(view + '-view').classList.remove('hidden');
+        btn.classList.add('active');
+    }
+
+    async function loadData() {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        renderSweep(data.sweepstakes);
+        renderMajor(data.major);
+    }
+
+    function renderSweep(data) {
+        const container = document.getElementById('sweep-view');
+        container.innerHTML = data.map((p, i) => {
+            const r = i + 1;
+            const medal = r === 1 ? 'rank-1' : r === 2 ? 'rank-2' : r === 3 ? 'rank-3' : '';
+            return `
+                <div class="card">
+                    <div class="card-main" onclick="this.nextElementSibling.classList.toggle('active')">
+                        <div class="rank-sq ${medal}">${r}</div>
+                        <div class="name-box">
+                            <div class="name-txt">${p["Entrants Name"]}</div>
+                            <div style="font-size:0.6rem; color:#888; font-weight:bold;">VIEW PICKS</div>
+                        </div>
+                        <div class="score-txt">${p["3 Lowest Combined"] > 0 ? '+'+p["3 Lowest Combined"] : p["3 Lowest Combined"]}</div>
+                    </div>
+                    <div class="picks-box">
+                        <div class="row row-head"><span>GOLFER</span><span>THRU</span><span style="text-align:right">SCORE</span></div>
+                        ${renderPick(p["Pick 1"], p["Thru 1"], p["Score 1"])}
+                        ${renderPick(p["Pick 2"], p["Thru 2"], p["Score 2"])}
+                        ${renderPick(p["Pick 3"], p["Thru 3"], p["Score 3"])}
+                        ${renderPick(p["Pick 4"], p["Thru 4"], p["Score 4"])}
+                        ${renderPick(p["Pick 5"], p["Thru 5"], p["Score 5"])}
+                        ${renderPick(p["Pick 6"], p["Thru 6"], p["Score 6"])}
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    function renderPick(name, thru, score) {
+        if (!name) return "";
+        return `<div class="row"><span>${name}</span><span style="color:#777">${thru || '-'}</span><span style="text-align:right">${score}</span></div>`;
+    }
+
+    function renderMajor(data) {
+        const list = document.getElementById('major-list');
+        list.innerHTML = data.filter(p => p.PLAYER || p.Player).slice(0, 40).map(p => `
+            <div class="card pro-row">
+                <span style="color:#888">${p.POS || p.Pos || '-'}</span>
+                <span style="color:var(--green); font-weight:800">${p.PLAYER || p.Player}</span>
+                <span style="color:#777; font-size:0.8rem;">${p.THRU || p.Thru || '-'}</span>
+                <span style="text-align:right; color:#d35400">${p.SCORE || p.ToPar || 'E'}</span>
+            </div>`).join('');
+    }
+
+    loadData();
+    setInterval(loadData, 60000);
+</script>
+</body>
+</html>
