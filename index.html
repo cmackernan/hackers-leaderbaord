@@ -3,230 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Hackers Sweepstakes | Live Leaderboard</title>
+    <title>The Hackers Sweepstakes | Live</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --green: #0a3d1e;
-            --gold: #d4af37;
-            --silver: #bdc3c7;
-            --bronze: #cd7f32;
-            --white: #ffffff;
+            --primary: #1a472a;
+            --accent: #d4af37;
+            --glass: rgba(255, 255, 255, 0.92);
+            --text: #1a1a1a;
         }
 
         body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            background: #1a3c15; 
-            margin: 0; padding: 0; 
-            color: #333;
+            font-family: 'Inter', sans-serif; 
+            margin: 0; padding: 0; color: var(--text);
+            /* High-end dark golf green gradient with subtle texture */
+            background: linear-gradient(rgba(10, 40, 20, 0.9), rgba(10, 40, 20, 0.9)), 
+                        url('https://www.transparenttextures.com/patterns/dark-leather.png'),
+                        #1a472a;
+            background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
         }
 
         header {
-            background: #051a0b;
-            color: white;
-            padding: 30px 15px;
+            padding: 40px 20px;
             text-align: center;
-            border-bottom: 4px solid var(--gold);
+            color: white;
+            background: radial-gradient(circle at center, #2d5a27 0%, #051a0b 100%);
+            border-bottom: 3px solid var(--accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .weather-info {
-            font-size: 0.8rem;
-            color: #f9e27d;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .weather-chip {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
 
-        /* Navigation */
+        /* Modern Navigation */
         .tabs {
             display: flex;
             justify-content: center;
-            background: rgba(0,0,0,0.3);
-            padding: 12px;
-            gap: 15px;
+            padding: 15px;
+            gap: 12px;
             position: sticky;
             top: 0;
-            z-index: 100;
-            backdrop-filter: blur(5px);
+            z-index: 1000;
+            background: rgba(5, 26, 11, 0.8);
+            backdrop-filter: blur(15px);
         }
 
         .tab-btn {
-            background: none;
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            padding: 8px 20px;
-            border-radius: 20px;
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            color: var(--accent);
+            padding: 10px 24px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
         }
 
         .tab-btn.active {
-            background: var(--gold);
-            color: black;
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
         }
 
-        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+        .container { max-width: 650px; margin: 25px auto; padding: 0 15px; }
 
-        /* Card Design */
+        /* Premium Card Design */
         .card {
-            background: var(--white);
-            margin-bottom: 12px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            overflow: hidden;
+            background: var(--glass);
+            margin-bottom: 16px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.2s ease;
         }
 
         .card-main {
             display: grid;
-            grid-template-columns: 50px 1fr 80px;
-            padding: 15px;
+            grid-template-columns: 60px 1fr 100px;
+            padding: 18px;
             align-items: center;
             cursor: pointer;
         }
 
-        .rank-box {
-            width: 35px; height: 35px;
-            background: #eee;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
+        .rank-circle {
+            width: 42px; height: 42px;
+            background: #222;
+            color: #fff;
+            border-radius: 10px; /* Modern squircle */
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.2rem;
         }
 
-        .rank-1 { background: var(--gold); color: black; }
-        .rank-2 { background: var(--silver); color: black; }
-        .rank-3 { background: var(--bronze); color: white; }
+        .gold { background: linear-gradient(135deg, #d4af37, #f9e27d); color: #000; }
+        .silver { background: linear-gradient(135deg, #bdc3c7, #ecf0f1); color: #000; }
+        .bronze { background: linear-gradient(135deg, #cd7f32, #f5d5b5); color: #000; }
 
-        .name-area { padding-left: 10px; }
-        .name-text { font-weight: bold; font-size: 1.1rem; }
-        .hint-text { font-size: 0.6rem; color: #888; display: block; margin-top: 2px; }
+        .name-stack { padding-left: 15px; }
+        .name-primary { font-weight: 800; font-size: 1.15rem; display: flex; align-items: center; }
+        .tap-label { font-size: 0.65rem; color: #666; font-weight: 700; text-transform: uppercase; margin-top: 4px; }
 
-        .total-score { text-align: right; font-weight: 900; font-size: 1.4rem; color: var(--green); }
+        .score-total { text-align: right; font-weight: 900; font-size: 1.6rem; color: var(--primary); }
 
-        .trend { font-size: 0.8rem; margin-left: 6px; }
+        .trend { font-size: 0.85rem; margin-left: 8px; font-weight: 900; }
 
-        /* Detail View */
-        .picks-detail {
+        /* Picks Section */
+        .picks-grid {
             display: none;
-            background: #f8f8f8;
-            padding: 15px;
-            border-top: 1px solid #eee;
+            padding: 20px;
+            background: rgba(255,255,255,0.5);
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            border-top: 1px solid rgba(0,0,0,0.05);
         }
 
-        .picks-detail.active { display: block; }
+        .picks-grid.active { display: grid; }
 
-        .pick-row {
+        .pick-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px dashed #ddd;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Pro Leaderboard Specifics */
+        .pro-card {
+            display: grid;
+            grid-template-columns: 40px 1fr 50px 60px;
+            padding: 15px;
+            align-items: center;
             font-size: 0.9rem;
+            font-weight: 700;
         }
 
         .hidden { display: none; }
+        #loader { text-align: center; color: var(--accent); padding: 50px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="weather-info">⛅ Newtown Square: 12°C | Wind: 6mph</div>
-    <h1 style="margin:0;">The Hackers Sweepstakes</h1>
+    <div class="weather-chip">⛅ NEWTOWN SQUARE: 12°C | 6MPH E</div>
+    <h1 style="margin: 0; font-size: 2.2rem; font-weight: 900; letter-spacing: -1px;">THE HACKERS <span style="color: var(--accent)">MAJOR</span></h1>
+    <p style="margin: 10px 0 0 0; opacity: 0.8; font-weight: 600; font-size: 0.9rem;">ARONIMINK GOLF CLUB</p>
 </header>
 
 <nav class="tabs">
-    <button class="tab-btn active" onclick="switchView('sweepstakes', this)">SWEEPSTAKES</button>
-    <button class="tab-btn" onclick="switchView('major', this)">PRO LEADERBOARD</button>
+    <button class="tab-btn active" onclick="toggleView('sweepstakes', this)">Sweepstakes</button>
+    <button class="tab-btn" onclick="toggleView('major', this)">Pro Leaderboard</button>
 </nav>
 
 <div class="container">
-    <div id="sweepstakes-view"></div>
-    <div id="major-view" class="hidden"></div>
+    <div id="loader">CARVING THE FAIRWAYS...</div>
+    <div id="sweepstakes-view" class="view-content"></div>
+    <div id="major-view" class="view-content hidden"></div>
 </div>
 
 <script>
-    // PASTE YOUR GOOGLE SCRIPT URL BELOW
+    // --- PASTE YOUR URL HERE ---
     const API_URL = "https://script.google.com/macros/s/AKfycby3RukkvX_KyWljSpPCtYhn7SMQzPBT8ChhGrLveq9DULFbWz8KV4_f-XgvWursDJF-zg/exec";
 
-    function switchView(view, btn) {
-        document.getElementById('sweepstakes-view').classList.add('hidden');
-        document.getElementById('major-view').classList.add('hidden');
+    function toggleView(view, btn) {
+        document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        
         document.getElementById(view + '-view').classList.remove('hidden');
         btn.classList.add('active');
     }
 
-    async function fetchData() {
+    async function getData() {
         try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            document.getElementById('loader').classList.add('hidden');
             renderSweep(data.sweepstakes);
             renderMajor(data.major);
         } catch (e) {
-            console.error("Failed to fetch data:", e);
+            document.getElementById('loader').innerText = "CONNECTION ERROR";
         }
     }
 
     function renderSweep(data) {
         const container = document.getElementById('sweepstakes-view');
-        container.innerHTML = "";
-
-        data.forEach((p, i) => {
-            const curRank = i + 1;
-            const prevRank = parseInt(p["Previous Rank"]) || curRank;
+        container.innerHTML = data.map((p, i) => {
+            const rank = i + 1;
+            const prev = parseInt(p["Previous Rank"]) || rank;
+            const medal = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
             
-            let trend = `<span class="trend" style="color:#999">▬</span>`;
-            if (prevRank > curRank) trend = `<span class="trend" style="color:green">▲${prevRank - curRank}</span>`;
-            if (prevRank < curRank) trend = `<span class="trend" style="color:red">▼${curRank - prevRank}</span>`;
+            let trend = `<span class="trend" style="color:#bbb">▬</span>`;
+            if (prev > rank) trend = `<span class="trend" style="color:#27ae60">▲${prev-rank}</span>`;
+            if (prev < rank) trend = `<span class="trend" style="color:#e74c3c">▼${rank-prev}</span>`;
 
-            let scoreText = p["3 Lowest Combined"];
-            let scoreFormatted = scoreText > 0 ? `+${scoreText}` : (scoreText == 0 ? "E" : scoreText);
+            const s = p["3 Lowest Combined"];
+            const scoreFmt = s > 0 ? `+${s}` : (s == 0 ? "E" : s);
 
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="card-main" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <div class="rank-box ${curRank <= 3 ? 'rank-'+curRank : ''}">${curRank}</div>
-                    <div class="name-area">
-                        <span class="name-text">${p["Entrants Name"]} ${trend}</span>
-                        <span class="hint-text">TAP TO SEE PICKS</span>
+            return `
+                <div class="card">
+                    <div class="card-main" onclick="togglePicks(this)">
+                        <div class="rank-circle ${medal}">${rank}</div>
+                        <div class="name-stack">
+                            <div class="name-primary">${p["Entrants Name"]} ${trend}</div>
+                            <div class="tap-label">Tap to view picks</div>
+                        </div>
+                        <div class="score-total">${scoreFmt}</div>
                     </div>
-                    <div class="total-score">${scoreFormatted}</div>
-                </div>
-                <div class="picks-detail">
-                    <div class="pick-row"><span>${p["Pick 1"]}</span> <b>${p["Score 1"]}</b></div>
-                    <div class="pick-row"><span>${p["Pick 2"]}</span> <b>${p["Score 2"]}</b></div>
-                    <div class="pick-row"><span>${p["Pick 3"]}</span> <b>${p["Score 3"]}</b></div>
-                    <div class="pick-row"><span>${p["Pick 4"]}</span> <b>${p["Score 4"]}</b></div>
-                    <div class="pick-row"><span>${p["Pick 5"]}</span> <b>${p["Score 5"]}</b></div>
-                    <div class="pick-row"><span>${p["Pick 6"]}</span> <b>${p["Score 6"]}</b></div>
+                    <div class="picks-grid">
+                        ${renderPick(p["Pick 1"], p["Score 1"])}
+                        ${renderPick(p["Pick 2"], p["Score 2"])}
+                        ${renderPick(p["Pick 3"], p["Score 3"])}
+                        ${renderPick(p["Pick 4"], p["Score 4"])}
+                        ${renderPick(p["Pick 5"], p["Score 5"])}
+                        ${renderPick(p["Pick 6"], p["Score 6"])}
+                    </div>
                 </div>
             `;
-            container.appendChild(card);
-        });
+        }).join('');
+    }
+
+    function renderPick(name, score) {
+        if (!name) return "";
+        return `<div class="pick-item"><span>${name}</span> <b>${score}</b></div>`;
     }
 
     function renderMajor(data) {
         const container = document.getElementById('major-view');
-        container.innerHTML = `<h2 style="color:white; text-align:center;">Pro Standings</h2>`;
-
-        data.slice(0, 30).forEach(pro => {
-            const row = document.createElement('div');
-            row.className = 'card';
-            row.style.padding = "15px";
-            row.style.display = "flex";
-            row.style.justifyContent = "space-between";
-            row.innerHTML = `
-                <span style="font-weight:bold">${pro.PLAYER || pro.Player || "Unknown"}</span>
-                <span style="font-weight:bold; color:var(--green)">${pro.SCORE || pro.ToPar || "E"}</span>
-            `;
-            container.appendChild(row);
-        });
+        // Filter out header row if it exists
+        const players = data.filter(p => p.PLAYER || p.Player);
+        
+        container.innerHTML = players.slice(0, 40).map(p => `
+            <div class="card pro-card">
+                <span style="color:#888">${p.POS || p.Pos || '-'}</span>
+                <span style="color:var(--primary)">${p.PLAYER || p.Player}</span>
+                <span style="text-align:center">${p.THRU || p.Thru || '-'}</span>
+                <span style="text-align:right; color:#d35400">${p.SCORE || p.ToPar || 'E'}</span>
+            </div>
+        `).join('');
     }
 
-    fetchData();
-    setInterval(fetchData, 60000); // Auto-refresh every minute
+    function togglePicks(el) {
+        el.nextElementSibling.classList.toggle('active');
+    }
+
+    getData();
+    setInterval(getData, 60000);
 </script>
 
 </body>
