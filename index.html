@@ -486,7 +486,7 @@
     return `<span class="movement-tag mv-same">—</span>`;
   }
 
-  /* ── APPLY CONFIG FROM SHEET ──────────────────── */
+/* ── APPLY CONFIG FROM SHEET ──────────────────── */
   function applyConfig(c) {
     if (!c) return;
 
@@ -504,10 +504,11 @@
       document.getElementById('weather-txt').textContent = '⛅ ' + String(c.weather_location).trim();
     }
 
-    if (c.prize_pool) document.getElementById('prize-pool').textContent = c.prize_pool;
-    if (c.prize_1st)  document.getElementById('prize-1st').textContent  = c.prize_1st;
-    if (c.prize_2nd)  document.getElementById('prize-2nd').textContent  = c.prize_2nd;
-    if (c.prize_3rd)  document.getElementById('prize-3rd').textContent  = c.prize_3rd;
+    // This section adds the Euro symbol to the numbers pulled from the Sheet
+    if (c.prize_pool) document.getElementById('prize-pool').textContent = '€' + c.prize_pool;
+    if (c.prize_1st)  document.getElementById('prize-1st').textContent  = '€' + c.prize_1st;
+    if (c.prize_2nd)  document.getElementById('prize-2nd').textContent  = '€' + c.prize_2nd;
+    if (c.prize_3rd)  document.getElementById('prize-3rd').textContent  = '€' + c.prize_3rd;
   }
 
   /* ── RENDER SWEEPSTAKES ───────────────────────── */
