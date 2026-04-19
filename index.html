@@ -3,162 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Hackers Sweepstakes | Aronimink</title>
+    <title>The Hackers Sweepstakes</title>
     <style>
-        :root {
-            --fairway-green: #0a3d1e;
-            --gold: linear-gradient(145deg, #d4af37, #f9e27d, #b8860b);
-            --silver: linear-gradient(145deg, #bdc3c7, #ecf0f1, #95a5a6);
-            --bronze: linear-gradient(145deg, #cd7f32, #f5d5b5, #a0522d);
-            --glass: rgba(255, 255, 255, 0.95);
-        }
-
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: radial-gradient(circle at top, #2d5a27 0%, #1a3c15 100%);
-            background-attachment: fixed;
-            margin: 0; padding: 0; min-height: 100vh; color: #333;
-        }
-
-        header {
-            background: linear-gradient(to bottom, #113318, #051a0b);
-            color: #fff; padding: 20px 10px; text-align: center;
-            border-bottom: 4px solid #d4af37;
-        }
-
-        .weather-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.1);
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            color: #f9e27d;
-            margin-bottom: 8px;
-        }
-
-        /* Navigation Tabs */
-        .tabs {
-            display: flex;
-            justify-content: center;
-            background: rgba(0,0,0,0.3);
-            padding: 10px 0;
-            gap: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .tab-btn {
-            background: none;
-            border: 1px solid #f9e27d;
-            color: #f9e27d;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.8rem;
-            transition: 0.3s;
-        }
-
-        .tab-btn.active {
-            background: #f9e27d;
-            color: #000;
-        }
-
-        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
-
-        /* Card Styling */
-        .entrant-card {
-            background: var(--glass);
-            margin-bottom: 12px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            overflow: hidden;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .main-info {
-            display: grid;
-            grid-template-columns: 50px 1fr 80px;
-            padding: 15px;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .rank-circle {
-            width: 35px;
-            height: 35px;
-            background: #333;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-weight: bold;
-        }
-
-        /* Medal Classes */
-        .rank-1 { background: var(--gold) !important; color: #000 !important; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-        .rank-2 { background: var(--silver) !important; color: #000 !important; }
-        .rank-3 { background: var(--bronze) !important; color: #fff !important; }
-
-        .name-box { padding-left: 10px; }
-        .entrant-name { font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; }
-        .tap-hint { font-size: 0.6rem; color: #888; text-transform: uppercase; display: block; margin-top: 2px; }
-
-        .total-score { text-align: right; font-weight: 900; font-size: 1.4rem; color: var(--fairway-green); }
-
-        .trend { font-size: 0.8rem; margin-left: 8px; font-weight: bold; }
-
-        /* Details (Picks) */
-        .picks-area {
-            display: none;
-            padding: 15px;
-            background: #f9f9f9;
-            border-top: 1px solid #eee;
-        }
-
-        .picks-area.active { display: block; }
-
-        .golfer-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9rem;
-        }
-
+        :root { --green: #0a3d1e; --gold: #d4af37; --silver: #bdc3c7; --bronze: #cd7f32; }
+        body { font-family: sans-serif; background: #1a3c15; color: #333; margin: 0; }
+        header { background: #051a0b; color: white; text-align: center; padding: 20px; border-bottom: 3px solid var(--gold); }
+        .tabs { display: flex; justify-content: center; background: rgba(0,0,0,0.2); padding: 10px; gap: 10px; sticky: top; }
+        .tab-btn { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 8px 15px; border-radius: 20px; cursor: pointer; }
+        .tab-btn.active { background: var(--gold); color: black; }
+        .container { max-width: 600px; margin: 20px auto; padding: 0 10px; }
+        .card { background: white; margin-bottom: 10px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .main-row { display: grid; grid-template-columns: 40px 1fr 60px; padding: 15px; align-items: center; cursor: pointer; }
+        .rank { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; background: #eee; }
+        .rank-1 { background: var(--gold); } .rank-2 { background: var(--silver); } .rank-3 { background: var(--bronze); color: white; }
+        .score { text-align: right; font-weight: bold; font-size: 1.2rem; }
+        .picks { display: none; padding: 15px; background: #f0f0f0; border-top: 1px solid #ddd; }
+        .picks.active { display: block; }
         .hidden { display: none; }
-
-        #last-updated { font-size: 0.7rem; color: #aaa; margin-top: 10px; }
+        .trend { font-size: 0.8rem; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="weather-badge">⛅ Aronimink GC: 18°C | NW 12km/h</div>
-    <h1 style="margin: 5px 0;">The Hackers Major</h1>
-    <div id="last-updated">Updating...</div>
+    <div style="font-size: 0.8rem; color: #f9e27d;">☁️ Newtown Square: 12°C | Wind: 6 mph E</div>
+    <h1>The Hackers Sweepstakes</h1>
 </header>
 
-<nav class="tabs">
-    <button class="tab-btn active" onclick="switchTab('sweepstakes', this)">SWEEPSTAKES</button>
-    <button class="tab-btn" onclick="switchTab('major', this)">PRO LEADERBOARD</button>
-</nav>
+<div class="tabs">
+    <button class="tab-btn active" onclick="showTab('sweepstakes', this)">SWEEPSTAKES</button>
+    <button class="tab-btn" onclick="showTab('major', this)">PRO LEADERBOARD</button>
+</div>
 
 <div class="container">
-    <div id="sweepstakes-content" class="tab-content">
-        <div id="sweepstakes-list"></div>
-    </div>
-
-    <div id="major-content" class="tab-content hidden">
-        <div id="major-list"></div>
-    </div>
+    <div id="sweepstakes" class="content"></div>
+    <div id="major" class="content hidden"></div>
 </div>
 
 <script>
-    // YOUR WEB APP URL HERE
-    const API_URL = "
+    const API = "REPLACE_WITH_YOUR_DEPLOYED_URL";
+
+    function showTab(id, el) {
+        document.querySelectorAll('.content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.remove('hidden');
+        el.classList.add('active');
+    }
+
+    async function load() {
+        const res = await fetch(API);
+        const data = await res.json();
+        renderSweep(data.sweepstakes);
+        renderMajor(data.major);
+    }
+
+    function renderSweep(list) {
+        const container = document.getElementById('sweepstakes');
+        container.innerHTML = list.map((p, i) => {
+            const cur = i + 1;
+            const prev = parseInt(p["Previous Rank"]) || cur;
+            let trend = `<span class="trend" style="color:gray">▬</span>`;
+            if (prev > cur) trend = `<span class="trend" style="color:green">▲${prev-cur}</span>`;
+            if (prev < cur) trend = `<span class="trend" style="color:red">▼${cur-prev}</span>`;
+            
+            return `
+                <div class="card">
+                    <div class="main-row" onclick="this.nextElementSibling.classList.toggle('active')">
+                        <div class="rank ${cur <= 3 ? 'rank-'+cur : ''}">${cur}</div>
+                        <div style="padding-left:10px"><b>${p["Entrants Name"]}</b> ${trend}</div>
+                        <div class="score">${p["3 Lowest Combined"] > 0 ? '+'+p["3 Lowest Combined"] : (p["3 Lowest Combined"] == 0 ? 'E' : p["3 Lowest Combined"])}</div>
+                    </div>
+                    <div class="picks">
+                        <div>${p["Pick 1"]} (${p["Score 1"]})</div>
+                        <div>${p["Pick 2"]} (${p["Score 2"]})</div>
+                        <div>${p["Pick 3"]} (${p["Score 3"]})</div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    function renderMajor(list) {
+        const container = document.getElementById('major');
+        container.innerHTML = list.slice(0,25).map(p => `
+            <div class="card" style="padding:15px; display:flex; justify-content:space-between;">
+                <b>${p.PLAYER || p.Player}</b> <span>${p.SCORE || p.ToPar}</span>
+            </div>`).join('');
+    }
+
+    load();
+</script>
+</body>
+</html>
