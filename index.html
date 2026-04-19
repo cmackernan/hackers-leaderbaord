@@ -3,94 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Hackers Sweepstakes</title>
+    <title>The Hackers Sweepstakes | Live Leaderboard</title>
     <style>
-        :root { --green: #0a3d1e; --gold: #d4af37; --silver: #bdc3c7; --bronze: #cd7f32; }
-        body { font-family: sans-serif; background: #1a3c15; color: #333; margin: 0; }
-        header { background: #051a0b; color: white; text-align: center; padding: 20px; border-bottom: 3px solid var(--gold); }
-        .tabs { display: flex; justify-content: center; background: rgba(0,0,0,0.2); padding: 10px; gap: 10px; sticky: top; }
-        .tab-btn { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 8px 15px; border-radius: 20px; cursor: pointer; }
-        .tab-btn.active { background: var(--gold); color: black; }
-        .container { max-width: 600px; margin: 20px auto; padding: 0 10px; }
-        .card { background: white; margin-bottom: 10px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-        .main-row { display: grid; grid-template-columns: 40px 1fr 60px; padding: 15px; align-items: center; cursor: pointer; }
-        .rank { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; background: #eee; }
-        .rank-1 { background: var(--gold); } .rank-2 { background: var(--silver); } .rank-3 { background: var(--bronze); color: white; }
-        .score { text-align: right; font-weight: bold; font-size: 1.2rem; }
-        .picks { display: none; padding: 15px; background: #f0f0f0; border-top: 1px solid #ddd; }
-        .picks.active { display: block; }
+        :root {
+            --green: #0a3d1e;
+            --gold: #d4af37;
+            --silver: #bdc3c7;
+            --bronze: #cd7f32;
+            --white: #ffffff;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background: #1a3c15; 
+            margin: 0; padding: 0; 
+            color: #333;
+        }
+
+        header {
+            background: #051a0b;
+            color: white;
+            padding: 30px 15px;
+            text-align: center;
+            border-bottom: 4px solid var(--gold);
+        }
+
+        .weather-info {
+            font-size: 0.8rem;
+            color: #f9e27d;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        .tab-btn {
+            background: none;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--gold);
+            color: black;
+        }
+
+        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+
+        /* Card Design */
+        .card {
+            background: var(--white);
+            margin-bottom: 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .card-main {
+            display: grid;
+            grid-template-columns: 50px 1fr 80px;
+            padding: 15px;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .rank-box {
+            width: 35px; height: 35px;
+            background: #eee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .rank-1 { background: var(--gold); color: black; }
+        .rank-2 { background: var(--silver); color: black; }
+        .rank-3 { background: var(--bronze); color: white; }
+
+        .name-area { padding-left: 10px; }
+        .name-text { font-weight: bold; font-size: 1.1rem; }
+        .hint-text { font-size: 0.6rem; color: #888; display: block; margin-top: 2px; }
+
+        .total-score { text-align: right; font-weight: 900; font-size: 1.4rem; color: var(--green); }
+
+        .trend { font-size: 0.8rem; margin-left: 6px; }
+
+        /* Detail View */
+        .picks-detail {
+            display: none;
+            background: #f8f8f8;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .picks-detail.active { display: block; }
+
+        .pick-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #ddd;
+            font-size: 0.9rem;
+        }
+
         .hidden { display: none; }
-        .trend { font-size: 0.8rem; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-size: 0.8rem; color: #f9e27d;">☁️ Newtown Square: 12°C | Wind: 6 mph E</div>
-    <h1>The Hackers Sweepstakes</h1>
+    <div class="weather-info">⛅ Newtown Square: 12°C | Wind: 6mph</div>
+    <h1 style="margin:0;">The Hackers Sweepstakes</h1>
 </header>
 
-<div class="tabs">
-    <button class="tab-btn active" onclick="showTab('sweepstakes', this)">SWEEPSTAKES</button>
-    <button class="tab-btn" onclick="showTab('major', this)">PRO LEADERBOARD</button>
-</div>
+<nav class="tabs">
+    <button class="tab-btn active" onclick="switchView('sweepstakes', this)">SWEEPSTAKES</button>
+    <button class="tab-btn" onclick="switchView('major', this)">PRO LEADERBOARD</button>
+</nav>
 
 <div class="container">
-    <div id="sweepstakes" class="content"></div>
-    <div id="major" class="content hidden"></div>
+    <div id="sweepstakes-view"></div>
+    <div id="major-view" class="hidden"></div>
 </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycby3RukkvX_KyWljSpPCtYhn7SMQzPBT8ChhGrLveq9DULFbWz8KV4_f-XgvWursDJF-zg/execL";
+    // PASTE YOUR GOOGLE SCRIPT URL BELOW
+    const API_URL = "https://script.google.com/macros/s/AKfycby3RukkvX_KyWljSpPCtYhn7SMQzPBT8ChhGrLveq9DULFbWz8KV4_f-XgvWursDJF-zg/exec";
 
-    function showTab(id, el) {
-        document.querySelectorAll('.content').forEach(c => c.classList.add('hidden'));
+    function switchView(view, btn) {
+        document.getElementById('sweepstakes-view').classList.add('hidden');
+        document.getElementById('major-view').classList.add('hidden');
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.remove('hidden');
-        el.classList.add('active');
+        
+        document.getElementById(view + '-view').classList.remove('hidden');
+        btn.classList.add('active');
     }
 
-    async function load() {
-        const res = await fetch(API);
-        const data = await res.json();
-        renderSweep(data.sweepstakes);
-        renderMajor(data.major);
+    async function fetchData() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            renderSweep(data.sweepstakes);
+            renderMajor(data.major);
+        } catch (e) {
+            console.error("Failed to fetch data:", e);
+        }
     }
 
-    function renderSweep(list) {
-        const container = document.getElementById('sweepstakes');
-        container.innerHTML = list.map((p, i) => {
-            const cur = i + 1;
-            const prev = parseInt(p["Previous Rank"]) || cur;
-            let trend = `<span class="trend" style="color:gray">▬</span>`;
-            if (prev > cur) trend = `<span class="trend" style="color:green">▲${prev-cur}</span>`;
-            if (prev < cur) trend = `<span class="trend" style="color:red">▼${cur-prev}</span>`;
+    function renderSweep(data) {
+        const container = document.getElementById('sweepstakes-view');
+        container.innerHTML = "";
+
+        data.forEach((p, i) => {
+            const curRank = i + 1;
+            const prevRank = parseInt(p["Previous Rank"]) || curRank;
             
-            return `
-                <div class="card">
-                    <div class="main-row" onclick="this.nextElementSibling.classList.toggle('active')">
-                        <div class="rank ${cur <= 3 ? 'rank-'+cur : ''}">${cur}</div>
-                        <div style="padding-left:10px"><b>${p["Entrants Name"]}</b> ${trend}</div>
-                        <div class="score">${p["3 Lowest Combined"] > 0 ? '+'+p["3 Lowest Combined"] : (p["3 Lowest Combined"] == 0 ? 'E' : p["3 Lowest Combined"])}</div>
+            let trend = `<span class="trend" style="color:#999">▬</span>`;
+            if (prevRank > curRank) trend = `<span class="trend" style="color:green">▲${prevRank - curRank}</span>`;
+            if (prevRank < curRank) trend = `<span class="trend" style="color:red">▼${curRank - prevRank}</span>`;
+
+            let scoreText = p["3 Lowest Combined"];
+            let scoreFormatted = scoreText > 0 ? `+${scoreText}` : (scoreText == 0 ? "E" : scoreText);
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-main" onclick="this.nextElementSibling.classList.toggle('active')">
+                    <div class="rank-box ${curRank <= 3 ? 'rank-'+curRank : ''}">${curRank}</div>
+                    <div class="name-area">
+                        <span class="name-text">${p["Entrants Name"]} ${trend}</span>
+                        <span class="hint-text">TAP TO SEE PICKS</span>
                     </div>
-                    <div class="picks">
-                        <div>${p["Pick 1"]} (${p["Score 1"]})</div>
-                        <div>${p["Pick 2"]} (${p["Score 2"]})</div>
-                        <div>${p["Pick 3"]} (${p["Score 3"]})</div>
-                    </div>
-                </div>`;
-        }).join('');
+                    <div class="total-score">${scoreFormatted}</div>
+                </div>
+                <div class="picks-detail">
+                    <div class="pick-row"><span>${p["Pick 1"]}</span> <b>${p["Score 1"]}</b></div>
+                    <div class="pick-row"><span>${p["Pick 2"]}</span> <b>${p["Score 2"]}</b></div>
+                    <div class="pick-row"><span>${p["Pick 3"]}</span> <b>${p["Score 3"]}</b></div>
+                    <div class="pick-row"><span>${p["Pick 4"]}</span> <b>${p["Score 4"]}</b></div>
+                    <div class="pick-row"><span>${p["Pick 5"]}</span> <b>${p["Score 5"]}</b></div>
+                    <div class="pick-row"><span>${p["Pick 6"]}</span> <b>${p["Score 6"]}</b></div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
     }
 
-    function renderMajor(list) {
-        const container = document.getElementById('major');
-        container.innerHTML = list.slice(0,25).map(p => `
-            <div class="card" style="padding:15px; display:flex; justify-content:space-between;">
-                <b>${p.PLAYER || p.Player}</b> <span>${p.SCORE || p.ToPar}</span>
-            </div>`).join('');
+    function renderMajor(data) {
+        const container = document.getElementById('major-view');
+        container.innerHTML = `<h2 style="color:white; text-align:center;">Pro Standings</h2>`;
+
+        data.slice(0, 30).forEach(pro => {
+            const row = document.createElement('div');
+            row.className = 'card';
+            row.style.padding = "15px";
+            row.style.display = "flex";
+            row.style.justifyContent = "space-between";
+            row.innerHTML = `
+                <span style="font-weight:bold">${pro.PLAYER || pro.Player || "Unknown"}</span>
+                <span style="font-weight:bold; color:var(--green)">${pro.SCORE || pro.ToPar || "E"}</span>
+            `;
+            container.appendChild(row);
+        });
     }
 
-    load();
+    fetchData();
+    setInterval(fetchData, 60000); // Auto-refresh every minute
 </script>
+
 </body>
 </html>
