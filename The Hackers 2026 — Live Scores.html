@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Hackers 2026 — Live Scores</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f0e9;--card:#fff;--ink:#10231a;--mut:#6b7a70;--acc:#14533a;--gold:#b8923a;--line:#e4e1d6;--neg:#b3321f;--hd:linear-gradient(135deg,#0d3b2a,#14533a);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1410;--card:#13201a;--ink:#eaf1ec;--mut:#8aa093;--acc:#3fae78;--gold:#d4b05a;--line:#22332a;--neg:#ff8272;--hd:linear-gradient(135deg,#0a2a1e,#12402e)}}
+:root[data-theme="dark"]{--bg:#0b1410;--card:#13201a;--ink:#eaf1ec;--mut:#8aa093;--acc:#3fae78;--gold:#d4b05a;--line:#22332a;--neg:#ff8272;--hd:linear-gradient(135deg,#0a2a1e,#12402e)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0 auto;background:var(--bg);color:var(--ink);font:15px/1.4 Inter,-apple-system,system-ui,"Segoe UI",sans-serif;max-width:640px;padding:0 12px 24px;-webkit-font-smoothing:antialiased}
+.hero{background:var(--hd);color:#fff;margin:0 -12px 14px;padding:22px 18px 18px;border-bottom:3px solid var(--gold)}
+h1{font:700 26px/1.1 "Playfair Display",Georgia,serif;margin:0;letter-spacing:.2px}
+.sub{color:rgba(255,255,255,.72);font-size:12px;margin-top:6px;letter-spacing:.8px;text-transform:uppercase}
+.live{color:#7be0a5;font-weight:600}
+.tabs{display:flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px;margin:0 0 10px}
+.rounds{display:flex;gap:8px;margin:0 0 12px}
+button{font:500 14px Inter,system-ui,sans-serif;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.tabs button{border:0;background:transparent;flex:1;color:var(--mut)}
+.tabs button.on{background:var(--acc);color:#fff;font-weight:600}
+.rounds button{flex:1}.rounds button.on{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:600}
+.teams button.on,.holes button.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:12px 0;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px rgba(0,0,0,.04)}
+.hd{font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:1px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.row{display:grid;grid-template-columns:26px 1fr 52px 54px 50px;gap:6px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);font-weight:500}
+.row:last-child{border:0}.row[data-x]{cursor:pointer}
+.row.ld{background:linear-gradient(90deg,rgba(184,146,58,.14),transparent);box-shadow:inset 3px 0 var(--gold)}
+.row b{font-size:19px;text-align:right;font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+.mut{color:var(--mut);font-size:12px;text-align:right;font-weight:400;font-variant-numeric:tabular-nums}
+.row .mut:first-child{text-align:left;font-weight:600;font-size:14px;color:var(--ink)}
+.neg{color:var(--neg)}
+.det{padding:6px 14px 14px;display:grid;grid-template-columns:repeat(9,1fr);gap:6px 3px;font-size:13px;font-weight:600;text-align:center;background:rgba(127,127,127,.05);border-bottom:1px solid var(--line)}
+.det i{font-style:normal;color:var(--mut);font-size:10px;font-weight:500;display:block}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.holes{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:12px 0}
+.holes button{padding:8px 0;font-size:14px;font-weight:600}.holes button small{display:block;color:var(--mut);font-size:11px;font-weight:500}
+.holes button.on small{color:#fff}
+.sc{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.sc button{padding:16px 4px;font-weight:600}
+.sc button:active{background:var(--acc);color:#fff}
+.note{color:var(--mut);font-size:12px;margin:10px 2px}
+</style></head><body>
+<div class="hero"><h1>The Hackers 2026</h1><div class="sub">Alvor · 8–11 Oct · <span class="live" id="st">connecting…</span></div></div>
+<div class="tabs"><button id="t1" class="on">Leaderboard</button><button id="t2">Enter Score</button></div>
+<div class="rounds" id="rb"></div>
+<div id="app"></div>
+<script>
+const T=[["Charley & Josh",[14,12.5,7]],["Ross & Fintan",[21,19,10]],["Conall & Ferg",[7,7,3]],["Bourkey & Griffin",[15,14,7]],["Coady & Browne",[20,17,10]],["Maurice & Bobby",[6,6.5,3]]];
+const R=[["I · Laguna · Chapman"],["II · Palmares · Fourball"],["III · Faldo · Scramble"]];
+const PTS=[10,8,6,5,4,2];
+let tab=1,rd=0,tm=0,hole=1,data={},col=null,live=false;
+const $=id=>document.getElementById(id);
+const f=x=>{x=Math.round(x*10)/10;return x===0?"E":x>0?"+"+x:""+x};
+const key=(r,t)=>"r"+r+"t"+t;
+function calc(r,t){const d=data[key(r,t)]||{};let n=0,p=0;for(let i=1;i<=18;i++){const v=d["h"+i];if(v!=null){n++;p+=v}}
+ const net=n?p-T[t][1][r]*n/18:0;return{n,p,net,d}}
+function board(r){return T.map((_,t)=>({t,...calc(r,t)})).sort((a,b)=>(!a.n-!b.n)||a.net-b.net)}
+function render(){
+ $("rb").innerHTML=R.map((x,i)=>`<button class="${i==rd?"on":""}" data-r="${i}">R${i+1}</button>`).join("");
+ $("t1").className=tab==1?"on":"";$("t2").className=tab==2?"on":"";
+ $("app").innerHTML=tab==1?lb():entry();
+}
+function lb(){
+ const b=board(rd);
+ let h=`<div class="card"><div class="hd">${R[rd][0]}</div>`+b.map((x,i)=>`<div class="row${i==0&&x.n?" ld":""}" data-x="${x.t}"><span class="mut">${x.n?i+1:"–"}</span><span>${T[x.t][0]}<br><span class="mut" style="text-align:left">Hcp ${T[x.t][1][rd]}</span></span><span class="mut">${x.n?"Thru "+(x.n==18?"F":x.n):""}</span><b class="${x.net<0?"neg":""}">${x.n?f(x.net):"–"}</b><span class="mut">${x.n?f(x.p)+" gr":""}</span></div>${open===x.t?det(x):""}`).join("")+`</div>`;
+ const tot=T.map((_,t)=>{let pts=0,net=0;for(let r=0;r<3;r++){const bb=board(r);const i=bb.findIndex(y=>y.t==t);if(bb[i].n){pts+=PTS[i];net+=bb[i].net}}return{t,pts,net}}).sort((a,b)=>b.pts-a.pts||a.net-b.net);
+ h+=`<div class="card"><div class="hd">Overall points (live, provisional)</div>`+tot.map((x,i)=>`<div class="row"><span class="mut">${i+1}</span><span>${T[x.t][0]}</span><span></span><b>${x.pts}</b><span class="mut">pts</span></div>`).join("")+`</div><div class="note">Scores shown net to par (handicap applied pro-rata for holes played). Closest-to-pin / longest-drive bonuses not included.</div>`;
+ return h}
+let open=null;
+function det(x){let s="";for(let i=1;i<=18;i++){const v=x.d["h"+i];s+=`<div><i>${i}</i>${v==null?"·":f(v)}</div>`}return`<div class="det">${s}</div>`}
+const G=[[[4,0],[1,2],[5,3]],[[1,3],[0,2],[5,4]],null],PIN=["2468","1357","9024"],MASTER="7788";
+let who=null,pinErr=0;try{who=localStorage.getItem("hk")}catch(e){}
+function ok(){return who=="M"?[0,1,2,3,4,5]:(who!=null&&G[rd]?G[rd][+who]:[])}
+function entry(){
+ if(!col)return`<div class="card" style="padding:14px">Scoring needs a signed-in Claude session. Open this link in Claude and sign in to enter scores — everyone else can watch the Leaderboard tab.</div>`;
+ if(who==null)return`<div class="card" style="padding:16px"><div class="hd" style="padding:0 0 10px;border:0">Scorer PIN</div><input id="pin" inputmode="numeric" maxlength="4" placeholder="4-digit PIN" style="width:100%;padding:12px;font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);margin-bottom:8px"><button data-pin="1" class="on" style="width:100%">Unlock scoring</button>${pinErr?'<div class="note neg">Wrong PIN</div>':''}<div class="note">One scorer per group of four. Ask the organiser for your PIN.</div></div>`;
+ const a=ok();
+ if(!a.length)return`<div class="card" style="padding:14px">Groups for this round aren't set yet — organiser can score with the master PIN.</div><button data-lock="1">Switch PIN</button>`;
+ if(!a.includes(tm))tm=a[0];
+ const d=(data[key(rd,tm)]||{});
+ return`<div class="note">${R[rd][0]} — your group. Tap a hole, then the score <b>relative to par</b>. <a href="#" data-lock="1" style="color:var(--acc)">Lock</a></div><div class="teams">`+a.map(i=>`<button class="${i==tm?"on":""}" data-t="${i}">${T[i][0]}</button>`).join("")+`</div><div class="holes">`+
+ Array.from({length:18},(_,k)=>{const v=d["h"+(k+1)];return`<button class="${hole==k+1?"on":""}" data-h="${k+1}">${k+1}<small>${v==null?"·":f(v)}</small></button>`}).join("")+`</div><div class="sc">`+
+ [[-2,"Eagle −2"],[-1,"Birdie −1"],[0,"Par"],[1,"Bogey +1"],[2,"Double +2"],[3,"Triple +3"],[4,"+4"],[5,"+5"],["x","Clear hole"]].map(([v,l])=>`<button data-s="${v}">${l}</button>`).join("")+`</div>`}
+async function save(v){
+ if(!ok().includes(tm))return;
+ const r=col.doc(key(rd,tm)),val=v==="x"?null:+v,p={["h"+hole]:val};
+ try{await r.update(p)}catch(e){try{await r.set(p)}catch(e2){$("st").textContent="save failed — retry"}}
+ if(val!=null&&hole<18)hole++;
+}
+document.addEventListener("click",e=>{
+ const b=e.target.closest("button,.row,a[data-lock]");if(!b)return;const D=b.dataset;
+ if(b.id=="t1")tab=1;else if(b.id=="t2")tab=2;
+ else if(D.r!=null)rd=+D.r;else if(D.t!=null){tm=+D.t;hole=1}
+ else if(D.h!=null)hole=+D.h;
+ else if(D.pin!=null){const v=($("pin")||{}).value;if(v===MASTER)who="M";else if(PIN.indexOf(v)>=0)who=""+PIN.indexOf(v);else pinErr=1;if(who!=null){pinErr=0;try{localStorage.setItem("hk",who)}catch(x){}}}
+ else if(D.lock!=null){e.preventDefault();who=null;try{localStorage.removeItem("hk")}catch(x){}}
+ else if(D.s!=null){save(D.s);return}
+ else if(D.x!=null)open=open==+D.x?null:+D.x;
+ render()});
+render();
+(async()=>{try{
+ const db=await claude.use("db");
+ if(!db){$("st").textContent="view only";return}
+ col=db.collection("scores");live=true;
+ col.onSnapshot(s=>{data={};s.docs.forEach(d=>data[d.id]=d.data());$("st").textContent="● live";render()},()=>{$("st").textContent="offline"});
+ render();
+}catch(e){$("st").textContent="view only"}})();
+</script></body></html>
